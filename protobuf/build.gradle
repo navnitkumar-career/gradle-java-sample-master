@@ -1,0 +1,96 @@
+plugins {
+  id "com.google.protobuf" version "0.8.14"
+}
+
+dependencies {
+  implementation libraries.core.protobuf_gradle
+  implementation libraries.core.pgv_java
+  implementation libraries.core.pgv_java_stub
+
+  implementation libraries.core.netty
+  implementation libraries.core.protobuf
+
+  if (JavaVersion.current().isJava9Compatible()) {
+    // Workaround for @javax.annotation.Generated
+    // see: https://github.com/grpc/grpc-java/issues/3633
+    implementation libraries.core.javax
+  }
+}
+
+protobuf {
+  protoc {
+    // The artifact spec for the Protobuf Compiler
+    artifact = libraries.core.protoc
+  }
+
+  plugins {
+    javapgv {
+      artifact = libraries.core.protoc_gen
+    }
+  }
+
+  generateProtoTasks {
+    all()*.plugins {
+      javapgv {
+        option "lang=java"
+      }
+    }
+    // (Java-only) returns tasks for a sourceSet
+    ofSourceSet('main')
+  }
+}
+
+sourceSets {
+  main {
+    proto {
+      srcDirs += "proto"
+      srcDirs += 'src/main/schema'
+      srcDirs += 'src/test/schema'
+    }
+  }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+  from sourceSets.main.allSource
+}
+
+compileJava {
+  options.debug = true
+  options.encoding = 'UTF-8'
+  options.debugOptions.debugLevel = 'source,vars,lines'
+  options.annotationProcessorGeneratedSourcesDirectory = project.generatedSourcesJavaDir
+  options.compilerArgs += [
+    "-Xlint:unchecked",
+    "-Xlint:deprecation",
+    "-proc:none",
+    "-s",
+    project.generatedSourcesJavaDir
+  ]
+}
+
+compileTestJava {
+  options.encoding = 'UTF-8'
+  options.compilerArgs += [
+    "-Xlint:unchecked",
+    "-Xlint:deprecation"
+  ]
+}
+
+javadoc {
+  options.addStringOption('Xdoclint:all,-missing', '-quiet')
+  options.encoding = 'UTF-8'
+  options.locale = 'en_US'
+  title = 'Gradle Java Sample [' + version + '] API'
+  //executable = "${System.getenv("JAVA_HOME")}/bin/javadoc"
+  failOnError true
+}
+
+// Turning off doclint in JDK 8 Javadoc
+// ref : http://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html
+if (JavaVersion.current().isJava8Compatible()) {
+  allprojects {
+    tasks.withType(Javadoc) {
+      options.addStringOption('Xdoclint:none', '-quiet')
+    }
+  }
+}

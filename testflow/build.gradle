@@ -1,0 +1,4 @@
+dependencies {
+  testImplementation libraries.test.spock_core
+  testImplementation libraries.test.spock_spring
+}

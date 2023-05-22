@@ -1,0 +1,20 @@
+dependencies {
+  // logback library dependencies
+  implementation(libraries.core.logback) {
+    excludeChecker
+  }
+  implementation(libraries.core.logback_classic) {
+    excludeChecker
+  }
+  implementation libraries.core.logback_json_classic
+  implementation libraries.core.logback_jackson
+  implementation libraries.core.jackson_databind
+  implementation libraries.core.janino
+
+  // logback test library dependencies
+  testImplementation libraries.core.logback_classic
+  testImplementation libraries.core.logback_json_classic
+  testImplementation libraries.core.logback_jackson
+  testImplementation libraries.core.jackson_databind
+  testImplementation libraries.core.janino
+}

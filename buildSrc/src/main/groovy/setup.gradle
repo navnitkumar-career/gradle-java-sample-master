@@ -1,0 +1,66 @@
+static def currentDateTime(final String format) {
+  def date = new Date()
+  return date.format(format)
+}
+
+def matchesVersion(final String versionTag) {
+  def properties = new Properties()
+  file("${project.rootDir}/gradle.properties").withInputStream { properties.load(it) }
+  def releaseTag = "${properties.getProperty("versionMajor")}." +
+    "${properties.getProperty("versionMinor")}." +
+    "${properties.getProperty("versionPatch")}"
+  return releaseTag == versionTag
+}
+
+def init() {
+  setupBanner()
+  setupProperties()
+}
+
+ext.info = [
+  'libraryDescription': 'Gradle Java sample project',
+
+  'siteUrl'           : 'https://github.com/AlexRogalskiy/gradle-java-sample',
+  'gitUrl'            : 'https://github.com/AlexRogalskiy/gradle-java-sample.git',
+
+  'libraryGroup'      : 'io.nullables.api.sample',
+  'libraryVersion'    : '0.0.1',
+
+  'developerId'       : 'AlexRogalskiy',
+  'developerName'     : 'Alexander Rogalskiy',
+
+  'licenseName'       : 'The Apache Software License, Version 2.0',
+  'licenseUrl'        : 'http://www.apache.org/licenses/LICENSE-2.0.txt',
+  'allLicenses'       : ["Apache-2.0"]
+]
+
+ext.setupBanner = {
+  println ""
+  println ""
+  println "::::    ::: :::    ::: :::        :::            :::     :::::::::   ::::::::"
+  println ":+:+:   :+: :+:    :+: :+:        :+:          :+: :+:   :+:    :+: :+:    :+:"
+  println ":+:+:+  +:+ +:+    +:+ +:+        +:+         +:+   +:+  +:+    +:+ +:+"
+  println "+#+ +:+ +#+ +#+    +:+ +#+        +#+        +#++:++#++: +#++:++#+  +#++:++#++"
+  println "+#+  +#+#+# +#+    +#+ +#+        +#+        +#+     +#+ +#+    +#+        +#+"
+  println "#+#   #+#+# #+#    #+# #+#        #+#        #+#     #+# #+#    #+# #+#    #+#"
+  println "###    ####  ########  ########## ########## ###     ### #########   ########"
+  println ""
+  println ""
+  println "     Project: $rootProject.name"
+  println ""
+  println "     Module: $project.name-v${utils.currentDate} $project.gradle.startParameter.taskNames"
+  println ""
+}
+
+ext.setupProperties = {
+  def customProperties = new Properties()
+  def customPropertiesURL = new URL("https://github.com/AlexRogalskiy/gradle-java-sample/blob/master/gradle.properties")
+  def customPropertiesStream = customPropertiesURL.openStream()
+  customProperties.load(customPropertiesStream)
+  customProperties.each { key, value -> ext.set(key, value) }
+}
+
+ext.utils = [
+  "currentDate": currentDateTime('yyyyMMdd'),
+  "currentTime": currentDateTime('yyyyMMdd-HH:mm:ss')
+]

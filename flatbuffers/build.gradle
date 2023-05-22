@@ -1,0 +1,22 @@
+import io.netifi.flatbuffers.plugin.tasks.FlatBuffers
+
+plugins {
+  id "io.netifi.flatbuffers" version "1.0.7"
+}
+
+dependencies {
+  implementation libraries.core.flatbuffers
+}
+
+flatbuffers {
+  flatcPath = 'C:\\portable\\flatbuffers\\flatc'
+  flatBuffersVersion = '1.12.0'
+  language = 'java'
+}
+
+task createFlatBuffers(type: FlatBuffers) {
+  inputDir = file("src/main/flatbuffers")
+  outputDir = file("src/main/java")
+  language = 'java'
+  //extraArgs = '--grpc'
+}
